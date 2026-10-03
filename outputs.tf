@@ -99,3 +99,15 @@ output "inventory_app_service" {
     public_access   = azurerm_linux_web_app.inventory[0].public_network_access_enabled
   } : null
 }
+
+output "inventory_private_endpoint" {
+  description = "Inventory private inbound connection information"
+
+  value = var.deploy_inventory_private_endpoint ? {
+    name       = azurerm_private_endpoint.inventory[0].name
+    private_ip = azurerm_private_endpoint.inventory[0].private_service_connection[0].private_ip_address
+    dns_zone   = azurerm_private_dns_zone.app_service[0].name
+    hostname   = azurerm_linux_web_app.inventory[0].default_hostname
+    url        = "https://${azurerm_linux_web_app.inventory[0].default_hostname}"
+  } : null
+}

@@ -39,8 +39,8 @@ variable "catalog_admin_password" {
 
   validation {
     condition = var.deploy_catalog_vm ? (
-      var.catalog_admin_password != null &&
-      length(var.catalog_admin_password) >= 12
+      var.catalog_admin_password != null ?
+      length(var.catalog_admin_password) >= 12 : false
     ) : true
 
     error_message = "A password of at least 12 characters is required when deploy_catalog_vm is true."
@@ -74,8 +74,8 @@ variable "weather_ssh_public_key" {
 
   validation {
     condition = var.deploy_weather_vm ? (
-      var.weather_ssh_public_key != null &&
-      startswith(var.weather_ssh_public_key, "ssh-")
+      var.weather_ssh_public_key != null ?
+      startswith(var.weather_ssh_public_key, "ssh-") : false
     ) : true
     error_message = "A valid SSH public key is required when deploy_weather_vm is true."
   }
@@ -109,4 +109,19 @@ variable "inventory_app_service_sku" {
   description = "SKU for the Inventory App Sevice Plan"
   type        = string
   default     = "S1"
+}
+
+variable "deploy_inventory_private_endpoint" {
+  description = "Deploy the Inventory App Service private endpoint"
+  type        = bool
+  default     = false
+
+  validation {
+    condition = (
+      !var.deploy_inventory_private_endpoint ||
+      var.deploy_inventory_app_service
+    )
+
+    error_message = "Inventory App Service must be enabled before its private endpoint."
+  }
 }
