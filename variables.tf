@@ -98,3 +98,15 @@ variable "tags" {
     Purpose     = "Learning"
   }
 }
+
+variable "deploy_inventory_app_service" {
+  description = "Deploy the ReadIt Inventory App Service"
+  type        = bool
+  default     = false
+}
+
+variable "inventory_app_service_sku" {
+  description = "SKU for the Inventory App Sevice Plan"
+  type        = string
+  default     = "S1"
+}

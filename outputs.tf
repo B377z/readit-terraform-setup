@@ -86,3 +86,16 @@ output "weather_vm" {
     dns_name   = "weather.${azurerm_private_dns_zone.internal.name}"
   } : null
 }
+
+output "inventory_app_service" {
+  description = "Inventory App Service information"
+
+  value = var.deploy_inventory_app_service ? {
+    name            = azurerm_linux_web_app.inventory[0].name
+    hostname        = azurerm_linux_web_app.inventory[0].default_hostname
+    url             = "https://${azurerm_linux_web_app.inventory[0].default_hostname}"
+    service_plan    = azurerm_service_plan.inventory[0].name
+    outbound_subnet = azurerm_subnet.app_service_integration.name
+    public_access   = azurerm_linux_web_app.inventory[0].public_network_access_enabled
+  } : null
+}
