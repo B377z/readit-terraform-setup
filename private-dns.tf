@@ -55,3 +55,36 @@ resource "azurerm_private_dns_a_record" "weather" {
   tags = local.common_tags
 }
 
+resource "azurerm_private_dns_zone" "app_service" {
+  count = var.deploy_inventory_private_endpoint ? 1 : 0
+
+  name                = "privatelink.azurewebsites.net"
+  resource_group_name = azurerm_resource_group.main.name
+
+  tags = local.common_tags
+}
+
+resource "azurerm_private_dns_zone_virtual_network_link" "app_service_application" {
+  count = var.deploy_inventory_private_endpoint ? 1 : 0
+
+  name                  = "link-${var.application_name}-${var.environment_name}-app-service-application"
+  resource_group_name   = azurerm_resource_group.main.name
+  private_dns_zone_name = azurerm_private_dns_zone.app_service[0].name
+  virtual_network_id    = azurerm_virtual_network.main.id
+  registration_enabled  = false
+
+  tags = local.common_tags
+}
+
+resource "azurerm_private_dns_zone_virtual_network_link" "app_service_ingress" {
+  count = var.deploy_inventory_private_endpoint ? 1 : 0
+
+  name                  = "link-${var.application_name}-${var.environment_name}-app-service-ingress"
+  resource_group_name   = azurerm_resource_group.main.name
+  private_dns_zone_name = azurerm_private_dns_zone.app_service[0].name
+  virtual_network_id    = azurerm_virtual_network.ingress.id
+  registration_enabled  = false
+
+  tags = local.common_tags
+}
+
